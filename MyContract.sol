@@ -3,17 +3,13 @@ pragma solidity >=0.4.0 <0.9.0;
 
 // This smart contract can be viewed public on the blockchain.
 contract MyContract {
-    string value;
+    string public value;
 
     constructor() {
         value = "myValue";
     }
 
-    function get() public view returns(string memory) {
-        return value;
-    }
-
-    function set(string calldata _value) public {
+    function set(string memory _value) public {
         value = _value;
     }
 }
