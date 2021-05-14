@@ -3,19 +3,18 @@ pragma solidity >=0.4.0 <0.9.0;
 
 // This smart contract can be viewed public on the blockchain.
 contract MyContract {
-    // enum is a class
-    enum State {Waiting, Ready, Active} // 0, 1, 2
-    State public state; // gives a public access
+    uint256 public peopleCount = 0;
+     // uint = key|id; person = pair|record; similar to database
+    mapping(uint => Person) public people;
 
-    constructor() {
-        state = State.Ready;
+    struct Person {
+        uint _id;
+        string _firstName;
+        string _lastName;
     }
 
-    function activate() public {
-        state = State.Active;
-    }
-
-    function isActive() public view returns(bool) {
-        return state == State.Active;
+    function addPerson(string memory _firstName, string memory _lastName) public {
+        peopleCount += 1;
+        people[peopleCount] = Person(peopleCount, _firstName, _lastName);
     }
 }
