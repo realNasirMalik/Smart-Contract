@@ -13,7 +13,7 @@ contract MyContract {
         return value;
     }
 
-    function set(string memory _value) public {
+    function set(string calldata _value) public {
         value = _value;
     }
 }
