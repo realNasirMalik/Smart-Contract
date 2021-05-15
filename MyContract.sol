@@ -1,43 +1,42 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.4.0 <0.9.0;
 
-contract ERC20Token {
-    string public name;
-    mapping(address => uint256) public balances;
+contract Ownable {
+    address public owner;
 
-    function mint() public {
-        balances[msg.sender]++;
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "must be owner");
+        _;
     }
 }
 
-// This smart contract can be viewed public on the blockchain.
-contract MyContract {
-    address payable wallet;
-    address public token;
+contract SecretVault {
+    string secret;
 
-    // Let's you log events.
-    event Purchase(
-        address indexed _buyer,
-        uint256 _amount
-    );
-
-    constructor(address payable _wallet, address _token) {
-        wallet = _wallet;
-        token = _token;
+    constructor(string memory _secret) {
+        secret = _secret;
     }
 
-    fallback() external payable {
-        buyToken();
+    function getSecret() public view returns(string memory) {
+        return secret;
+    }
+}
+
+contract MyContract is Ownable {
+    address secretVault;
+
+    constructor(string memory _secret) {
+        SecretVault _secretVault = new SecretVault(_secret);
+        secretVault = address(_secretVault);
+        super;
     }
 
-    receive() external payable {
-        buyToken();
-    }
-
-    function buyToken() public payable {
-        ERC20Token(address(token)).mint();
-        // send ether to the wallet
-        wallet.transfer(msg.value);
-        emit Purchase(msg.sender, 1);
+    function getSecret() public view onlyOwner returns(string memory) {
+        SecretVault _secretVault = SecretVault(secretVault);
+        return _secretVault.getSecret();
     }
 }
